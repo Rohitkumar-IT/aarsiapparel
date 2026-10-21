@@ -1,0 +1,1072 @@
+{
+  "info": {
+    "name": "Aarsi Apparel – Full order flow (existing + proposed)",
+    "description": "Existing endpoints plus proposed order-flow endpoints with full payloads. Run 15 first; its test script stores orderId / orderNumber / trackingToken for the later requests. See API_SPEC.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://admin.aarsiapparel.com"
+    },
+    {
+      "key": "productSlug",
+      "value": "rose-silk-gown"
+    },
+    {
+      "key": "objectPath",
+      "value": "products/replace-with-object-name.webp"
+    },
+    {
+      "key": "orderId",
+      "value": "ord_01HZX5Q8M2"
+    },
+    {
+      "key": "orderNumber",
+      "value": "AA-100234"
+    },
+    {
+      "key": "trackingToken",
+      "value": "trk_8f3b2c1d9a7e4f60b5"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 · Catalog (existing)",
+      "item": [
+        {
+          "name": "1. Store settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/store",
+            "description": "Shipping, GST, COD and returns config. Storefront uses it for the ticker, trust strip, free-shipping progress and FAQ copy."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/public/store",
+                "description": "Shipping, GST, COD and returns config. Storefront uses it for the ticker, trust strip, free-shipping progress and FAQ copy."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"name\": \"Aarsi Apparel\",\n    \"currency\": \"INR\",\n    \"gstRatePct\": 5,\n    \"shippingFeePaisa\": 9900,\n    \"freeShippingThresholdPaisa\": 149900,\n    \"codAvailable\": true,\n    \"codFeePaisa\": 0,\n    \"returnDays\": 7,\n    \"deliveryNote\": \"Free shipping above ₹1,499\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2. Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/categories",
+            "description": "Active categories (`parentId`, `imageUrl`, `productCount`)."
+          }
+        },
+        {
+          "name": "3. Collections",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/collections",
+            "description": "Active storefront collections (used for hero slides, mega menu and collection banners)."
+          }
+        },
+        {
+          "name": "4. Product list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/products?page=1&pageSize=24&sort=newest&category=dresses&size=M&color=Blush&minPricePaisa=50000&maxPricePaisa=250000&newArrival=true",
+            "description": "Paginated cards: `{items,total,page,pageSize,totalPages}`. Filters: `search, category, collection, fabric, size, color, minPricePaisa, maxPricePaisa, featured, newArrival, bestSeller, trending`.\n\n**Requested additions (the storefront currently emulates these client-side over the first 200 matches):** `sort=price_asc|price_desc`, `onSale=true`."
+          }
+        },
+        {
+          "name": "5. Product detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/products/{{productSlug}}",
+            "description": "Full product with variants. **Please confirm field names against the example** — the storefront reads several aliases, but this is the shape it is designed for."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/public/products/{{productSlug}}",
+                "description": "Full product with variants. **Please confirm field names against the example** — the storefront reads several aliases, but this is the shape it is designed for."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"prd_01HZX3K9\",\n    \"slug\": \"rose-silk-gown\",\n    \"name\": \"Rose Silk Gown\",\n    \"shortDescription\": \"Hand-finished silk gown\",\n    \"description\": \"Soft silk with zari trim…\",\n    \"category\": {\n      \"id\": \"cat_1\",\n      \"name\": \"Dresses\",\n      \"slug\": \"dresses\"\n    },\n    \"images\": [\n      {\n        \"url\": \"/api/objects/products/rose-silk-gown-1.webp\",\n        \"alt\": \"Rose Silk Gown\"\n      },\n      {\n        \"url\": \"/api/objects/products/rose-silk-gown-2.webp\",\n        \"alt\": \"Back view\"\n      }\n    ],\n    \"pricePaisa\": 249900,\n    \"mrpPaisa\": 299900,\n    \"gstPaisa\": 11900,\n    \"payablePaisa\": 249900,\n    \"fabric\": \"Silk blend\",\n    \"care\": \"Dry clean only\",\n    \"colors\": [\n      {\n        \"name\": \"Blush\",\n        \"hex\": \"#FEDDC5\"\n      },\n      {\n        \"name\": \"Rose\",\n        \"hex\": \"#B66570\"\n      }\n    ],\n    \"sizes\": [\n      \"S\",\n      \"M\",\n      \"L\",\n      \"XL\"\n    ],\n    \"variants\": [\n      {\n        \"id\": \"var_01HZX3KA\",\n        \"sku\": \"AA-GWN-BLS-M\",\n        \"size\": \"M\",\n        \"color\": \"Blush\",\n        \"colorHex\": \"#FEDDC5\",\n        \"pricePaisa\": 249900,\n        \"mrpPaisa\": 299900,\n        \"gstPaisa\": 11900,\n        \"payablePaisa\": 249900,\n        \"stock\": 3,\n        \"inStock\": true\n      }\n    ],\n    \"featured\": true,\n    \"newArrival\": true,\n    \"bestSeller\": false,\n    \"trending\": false,\n    \"rating\": 4.7,\n    \"reviewCount\": 12,\n    \"reviews\": [\n      {\n        \"id\": \"rev_1\",\n        \"rating\": 5,\n        \"title\": \"Lovely\",\n        \"comment\": \"Beautiful fabric\",\n        \"customerName\": \"Riya\",\n        \"createdAt\": \"2026-10-02T10:00:00Z\"\n      }\n    ],\n    \"inStock\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6. Public media",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/objects/{{objectPath}}",
+            "description": "Image/video bytes. Always returned as relative URLs by the APIs above."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 · Blog (existing)",
+      "item": [
+        {
+          "name": "7. Blog list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/blogs?page=1&pageSize=12",
+            "description": ""
+          }
+        },
+        {
+          "name": "8. Blog detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/blogs/{{productSlug}}",
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · Customer (existing)",
+      "item": [
+        {
+          "name": "9. Start Google login",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/customer/auth/google?returnTo=/account",
+            "description": "302 redirect. Browser flow; sets the HttpOnly `aarsi_customer_session` cookie."
+          }
+        },
+        {
+          "name": "10. Current customer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/customer/me",
+            "description": "`401` when signed out."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/customer/me",
+                "description": "`401` when signed out."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"cus_01HZ\",\n    \"name\": \"Anjali Sharma\",\n    \"email\": \"anjali@example.com\",\n    \"avatarUrl\": \"https://lh3.googleusercontent.com/…\",\n    \"phone\": \"9876543210\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "11. Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/customer/auth/logout",
+            "description": "Idempotent."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 · Cart, offers & delivery (NEW)",
+      "item": [
+        {
+          "name": "12. Active offers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/offers",
+            "description": "[NEW – proposed] Shown as coupon cards on the home page and in the announcement ticker."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/public/offers",
+                "description": "[NEW – proposed] Shown as coupon cards on the home page and in the announcement ticker."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"code\": \"WELCOME10\",\n        \"title\": \"10% off your first order\",\n        \"description\": \"Applies once per customer\",\n        \"minOrderPaisa\": 99900\n      },\n      {\n        \"code\": \"PREPAID150\",\n        \"title\": \"₹150 off on online payment\",\n        \"description\": \"Pay online and save\",\n        \"minOrderPaisa\": 150000\n      }\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "13. Price the cart (quote)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/cart/quote",
+            "description": "[NEW – proposed] **Single source of truth for totals.** Called on every cart/coupon/pincode/payment change in checkout (debounced 350 ms). The server re-reads prices and stock — the client never sends prices. Order of calculation is in §3.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"prd_01HZX3K9\",\n      \"variantId\": \"var_01HZX3KA\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"prd_01HZX4B2\",\n      \"variantId\": \"var_01HZX4B7\",\n      \"quantity\": 1\n    }\n  ],\n  \"couponCode\": \"WELCOME10\",\n  \"pincode\": \"201318\",\n  \"paymentMethod\": \"online\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/public/cart/quote",
+                "description": "[NEW – proposed] **Single source of truth for totals.** Called on every cart/coupon/pincode/payment change in checkout (debounced 350 ms). The server re-reads prices and stock — the client never sends prices. Order of calculation is in §3.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"prd_01HZX3K9\",\n      \"variantId\": \"var_01HZX3KA\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"prd_01HZX4B2\",\n      \"variantId\": \"var_01HZX4B7\",\n      \"quantity\": 1\n    }\n  ],\n  \"couponCode\": \"WELCOME10\",\n  \"pincode\": \"201318\",\n  \"paymentMethod\": \"online\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"lines\": [\n      {\n        \"productId\": \"prd_01HZX3K9\",\n        \"variantId\": \"var_01HZX3KA\",\n        \"name\": \"Rose Silk Gown\",\n        \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n        \"size\": \"M\",\n        \"color\": \"Blush\",\n        \"quantity\": 1,\n        \"unitPricePaisa\": 249900,\n        \"mrpPaisa\": 299900,\n        \"lineTotalPaisa\": 249900,\n        \"available\": true,\n        \"maxQuantity\": 3\n      },\n      {\n        \"productId\": \"prd_01HZX4B2\",\n        \"variantId\": \"var_01HZX4B7\",\n        \"name\": \"Blush Kurta Set\",\n        \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n        \"size\": \"L\",\n        \"color\": \"Rose\",\n        \"quantity\": 1,\n        \"unitPricePaisa\": 199900,\n        \"mrpPaisa\": 249900,\n        \"lineTotalPaisa\": 199900,\n        \"available\": true,\n        \"maxQuantity\": 5\n      }\n    ],\n    \"subtotalPaisa\": 449800,\n    \"tierDiscount\": {\n      \"label\": \"Buy 2, get 10% off\",\n      \"percent\": 10,\n      \"amountPaisa\": 44980\n    },\n    \"couponCode\": \"WELCOME10\",\n    \"couponDiscountPaisa\": 40482,\n    \"prepaidDiscountPaisa\": 15000,\n    \"shippingPaisa\": 0,\n    \"codFeePaisa\": 0,\n    \"gstIncludedPaisa\": 16635,\n    \"totalPaisa\": 349338,\n    \"messages\": [\n      \"You saved ₹1,004.62 on this order\"\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "14. Pincode serviceability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/pincodes/201318",
+            "description": "[NEW – proposed] Auto-fills city/state, tells the UI whether COD is allowed, and gives the delivery estimate for the product page."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/public/pincodes/201318",
+                "description": "[NEW – proposed] Auto-fills city/state, tells the UI whether COD is allowed, and gives the delivery estimate for the product page."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"pincode\": \"201318\",\n    \"serviceable\": true,\n    \"codAvailable\": true,\n    \"city\": \"Greater Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"etaDaysMin\": 3,\n    \"etaDaysMax\": 5,\n    \"shippingPaisa\": 0\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5 · Order & payment (NEW)",
+      "item": [
+        {
+          "name": "15. Create order (online payment)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "3f1c9a52-7b2e-4c1d-9a55-0d6e2b9f1a10"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders",
+            "description": "[NEW – proposed] Re-prices server-side, **reserves stock**, creates the order and, for `online`, a Razorpay order. `quoteTotalPaisa` is the total the customer saw; if the server total differs → `409 PRICE_CHANGED`. Send `Idempotency-Key` (UUID) — retries with the same key return the same order.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"prd_01HZX3K9\",\n      \"variantId\": \"var_01HZX3KA\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"prd_01HZX4B2\",\n      \"variantId\": \"var_01HZX4B7\",\n      \"quantity\": 1\n    }\n  ],\n  \"couponCode\": \"WELCOME10\",\n  \"paymentMethod\": \"online\",\n  \"shippingAddress\": {\n    \"fullName\": \"Anjali Sharma\",\n    \"phone\": \"9876543210\",\n    \"email\": \"anjali@example.com\",\n    \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n    \"line2\": \"Greater Noida West\",\n    \"landmark\": \"Near Blue Sapphire Plaza\",\n    \"city\": \"Greater Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"pincode\": \"201318\"\n  },\n  \"billingSameAsShipping\": true,\n  \"notes\": \"Please call before delivery\",\n  \"quoteTotalPaisa\": 349338,\n  \"source\": \"web\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "3f1c9a52-7b2e-4c1d-9a55-0d6e2b9f1a10"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders",
+                "description": "[NEW – proposed] Re-prices server-side, **reserves stock**, creates the order and, for `online`, a Razorpay order. `quoteTotalPaisa` is the total the customer saw; if the server total differs → `409 PRICE_CHANGED`. Send `Idempotency-Key` (UUID) — retries with the same key return the same order.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"prd_01HZX3K9\",\n      \"variantId\": \"var_01HZX3KA\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"prd_01HZX4B2\",\n      \"variantId\": \"var_01HZX4B7\",\n      \"quantity\": 1\n    }\n  ],\n  \"couponCode\": \"WELCOME10\",\n  \"paymentMethod\": \"online\",\n  \"shippingAddress\": {\n    \"fullName\": \"Anjali Sharma\",\n    \"phone\": \"9876543210\",\n    \"email\": \"anjali@example.com\",\n    \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n    \"line2\": \"Greater Noida West\",\n    \"landmark\": \"Near Blue Sapphire Plaza\",\n    \"city\": \"Greater Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"pincode\": \"201318\"\n  },\n  \"billingSameAsShipping\": true,\n  \"notes\": \"Please call before delivery\",\n  \"quoteTotalPaisa\": 349338,\n  \"source\": \"web\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order\": {\n      \"id\": \"ord_01HZX5Q8M2\",\n      \"orderNumber\": \"AA-100234\",\n      \"status\": \"pending_payment\",\n      \"paymentStatus\": \"pending\",\n      \"paymentMethod\": \"online\",\n      \"currency\": \"INR\",\n      \"items\": [\n        {\n          \"productId\": \"prd_01HZX3K9\",\n          \"variantId\": \"var_01HZX3KA\",\n          \"sku\": \"AA-GWN-BLS-M\",\n          \"name\": \"Rose Silk Gown\",\n          \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n          \"size\": \"M\",\n          \"color\": \"Blush\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 249900,\n          \"mrpPaisa\": 299900,\n          \"lineTotalPaisa\": 249900\n        },\n        {\n          \"productId\": \"prd_01HZX4B2\",\n          \"variantId\": \"var_01HZX4B7\",\n          \"sku\": \"AA-KRT-ROS-L\",\n          \"name\": \"Blush Kurta Set\",\n          \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n          \"size\": \"L\",\n          \"color\": \"Rose\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 199900,\n          \"mrpPaisa\": 249900,\n          \"lineTotalPaisa\": 199900\n        }\n      ],\n      \"pricing\": {\n        \"subtotalPaisa\": 449800,\n        \"tierDiscountPaisa\": 44980,\n        \"couponDiscountPaisa\": 40482,\n        \"prepaidDiscountPaisa\": 15000,\n        \"shippingPaisa\": 0,\n        \"codFeePaisa\": 0,\n        \"gstIncludedPaisa\": 16635,\n        \"totalPaisa\": 349338\n      },\n      \"couponCode\": \"WELCOME10\",\n      \"shippingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"billingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"contact\": {\n        \"name\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\"\n      },\n      \"timeline\": [\n        {\n          \"status\": \"placed\",\n          \"label\": \"Order placed\",\n          \"at\": \"2026-10-20T09:12:44Z\"\n        }\n      ],\n      \"tracking\": null,\n      \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n      \"createdAt\": \"2026-10-20T09:12:44Z\"\n    },\n    \"payment\": {\n      \"provider\": \"razorpay\",\n      \"keyId\": \"rzp_live_XXXXXXXX\",\n      \"providerOrderId\": \"order_Pq1R2s3T4u5V6w\",\n      \"amountPaisa\": 349338,\n      \"currency\": \"INR\"\n    }\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data;",
+                  "pm.collectionVariables.set('orderId', d.order.id);",
+                  "pm.collectionVariables.set('orderNumber', d.order.orderNumber);",
+                  "pm.collectionVariables.set('trackingToken', d.order.trackingToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16. Create order (cash on delivery)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "b8d0f6a1-2e4c-4a39-8f10-51c7d7e0c9aa"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders",
+            "description": "[NEW – proposed] Same endpoint with `paymentMethod: \"cod\"`. No `payment` session is returned; the order is created `confirmed` with `paymentStatus: cod_pending`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"prd_01HZX3K9\",\n      \"variantId\": \"var_01HZX3KA\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"prd_01HZX4B2\",\n      \"variantId\": \"var_01HZX4B7\",\n      \"quantity\": 1\n    }\n  ],\n  \"couponCode\": \"WELCOME10\",\n  \"paymentMethod\": \"cod\",\n  \"shippingAddress\": {\n    \"fullName\": \"Anjali Sharma\",\n    \"phone\": \"9876543210\",\n    \"email\": \"anjali@example.com\",\n    \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n    \"line2\": \"Greater Noida West\",\n    \"landmark\": \"Near Blue Sapphire Plaza\",\n    \"city\": \"Greater Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"pincode\": \"201318\"\n  },\n  \"billingSameAsShipping\": true,\n  \"notes\": \"Please call before delivery\",\n  \"quoteTotalPaisa\": 364338,\n  \"source\": \"web\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "b8d0f6a1-2e4c-4a39-8f10-51c7d7e0c9aa"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders",
+                "description": "[NEW – proposed] Same endpoint with `paymentMethod: \"cod\"`. No `payment` session is returned; the order is created `confirmed` with `paymentStatus: cod_pending`.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"prd_01HZX3K9\",\n      \"variantId\": \"var_01HZX3KA\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"prd_01HZX4B2\",\n      \"variantId\": \"var_01HZX4B7\",\n      \"quantity\": 1\n    }\n  ],\n  \"couponCode\": \"WELCOME10\",\n  \"paymentMethod\": \"cod\",\n  \"shippingAddress\": {\n    \"fullName\": \"Anjali Sharma\",\n    \"phone\": \"9876543210\",\n    \"email\": \"anjali@example.com\",\n    \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n    \"line2\": \"Greater Noida West\",\n    \"landmark\": \"Near Blue Sapphire Plaza\",\n    \"city\": \"Greater Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"pincode\": \"201318\"\n  },\n  \"billingSameAsShipping\": true,\n  \"notes\": \"Please call before delivery\",\n  \"quoteTotalPaisa\": 364338,\n  \"source\": \"web\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order\": {\n      \"id\": \"ord_01HZX5Q8M2\",\n      \"orderNumber\": \"AA-100234\",\n      \"status\": \"confirmed\",\n      \"paymentStatus\": \"cod_pending\",\n      \"paymentMethod\": \"cod\",\n      \"currency\": \"INR\",\n      \"items\": [\n        {\n          \"productId\": \"prd_01HZX3K9\",\n          \"variantId\": \"var_01HZX3KA\",\n          \"sku\": \"AA-GWN-BLS-M\",\n          \"name\": \"Rose Silk Gown\",\n          \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n          \"size\": \"M\",\n          \"color\": \"Blush\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 249900,\n          \"mrpPaisa\": 299900,\n          \"lineTotalPaisa\": 249900\n        },\n        {\n          \"productId\": \"prd_01HZX4B2\",\n          \"variantId\": \"var_01HZX4B7\",\n          \"sku\": \"AA-KRT-ROS-L\",\n          \"name\": \"Blush Kurta Set\",\n          \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n          \"size\": \"L\",\n          \"color\": \"Rose\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 199900,\n          \"mrpPaisa\": 249900,\n          \"lineTotalPaisa\": 199900\n        }\n      ],\n      \"pricing\": {\n        \"subtotalPaisa\": 449800,\n        \"tierDiscountPaisa\": 44980,\n        \"couponDiscountPaisa\": 40482,\n        \"prepaidDiscountPaisa\": 0,\n        \"shippingPaisa\": 0,\n        \"codFeePaisa\": 0,\n        \"gstIncludedPaisa\": 16635,\n        \"totalPaisa\": 364338\n      },\n      \"couponCode\": \"WELCOME10\",\n      \"shippingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"billingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"contact\": {\n        \"name\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\"\n      },\n      \"timeline\": [\n        {\n          \"status\": \"placed\",\n          \"label\": \"Order placed\",\n          \"at\": \"2026-10-20T09:12:44Z\"\n        }\n      ],\n      \"tracking\": null,\n      \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n      \"createdAt\": \"2026-10-20T09:12:44Z\"\n    },\n    \"payment\": null\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "17. Verify Razorpay payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/payment/verify",
+            "description": "[NEW – proposed] Called from the Razorpay `handler` callback. Server verifies `HMAC_SHA256(razorpay_order_id + \"|\" + razorpay_payment_id, key_secret)` and marks the order paid. The webhook (#18) is the safety net if the customer closes the tab.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razorpay_order_id\": \"order_Pq1R2s3T4u5V6w\",\n  \"razorpay_payment_id\": \"pay_Qa1B2c3D4e5F6g\",\n  \"razorpay_signature\": \"9ef4dffbfd84f1318f6739a3ce19f9d85851857ae648f114332d8401e0949a3d\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/payment/verify",
+                "description": "[NEW – proposed] Called from the Razorpay `handler` callback. Server verifies `HMAC_SHA256(razorpay_order_id + \"|\" + razorpay_payment_id, key_secret)` and marks the order paid. The webhook (#18) is the safety net if the customer closes the tab.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"razorpay_order_id\": \"order_Pq1R2s3T4u5V6w\",\n  \"razorpay_payment_id\": \"pay_Qa1B2c3D4e5F6g\",\n  \"razorpay_signature\": \"9ef4dffbfd84f1318f6739a3ce19f9d85851857ae648f114332d8401e0949a3d\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order\": {\n      \"id\": \"ord_01HZX5Q8M2\",\n      \"orderNumber\": \"AA-100234\",\n      \"status\": \"confirmed\",\n      \"paymentStatus\": \"paid\",\n      \"paymentMethod\": \"online\",\n      \"currency\": \"INR\",\n      \"items\": [\n        {\n          \"productId\": \"prd_01HZX3K9\",\n          \"variantId\": \"var_01HZX3KA\",\n          \"sku\": \"AA-GWN-BLS-M\",\n          \"name\": \"Rose Silk Gown\",\n          \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n          \"size\": \"M\",\n          \"color\": \"Blush\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 249900,\n          \"mrpPaisa\": 299900,\n          \"lineTotalPaisa\": 249900\n        },\n        {\n          \"productId\": \"prd_01HZX4B2\",\n          \"variantId\": \"var_01HZX4B7\",\n          \"sku\": \"AA-KRT-ROS-L\",\n          \"name\": \"Blush Kurta Set\",\n          \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n          \"size\": \"L\",\n          \"color\": \"Rose\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 199900,\n          \"mrpPaisa\": 249900,\n          \"lineTotalPaisa\": 199900\n        }\n      ],\n      \"pricing\": {\n        \"subtotalPaisa\": 449800,\n        \"tierDiscountPaisa\": 44980,\n        \"couponDiscountPaisa\": 40482,\n        \"prepaidDiscountPaisa\": 15000,\n        \"shippingPaisa\": 0,\n        \"codFeePaisa\": 0,\n        \"gstIncludedPaisa\": 16635,\n        \"totalPaisa\": 349338\n      },\n      \"couponCode\": \"WELCOME10\",\n      \"shippingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"billingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"contact\": {\n        \"name\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\"\n      },\n      \"timeline\": [\n        {\n          \"status\": \"placed\",\n          \"label\": \"Order placed\",\n          \"at\": \"2026-10-20T09:12:44Z\"\n        },\n        {\n          \"status\": \"paid\",\n          \"label\": \"Payment received\",\n          \"at\": \"2026-10-20T09:14:02Z\"\n        },\n        {\n          \"status\": \"confirmed\",\n          \"label\": \"Order confirmed\",\n          \"at\": \"2026-10-20T09:14:03Z\"\n        }\n      ],\n      \"tracking\": null,\n      \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n      \"createdAt\": \"2026-10-20T09:12:44Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "18. Razorpay webhook (server → server)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Razorpay-Signature",
+                "value": "<hmac>"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/webhooks/razorpay",
+            "description": "[NEW – proposed] Not called by the storefront. Handle `payment.captured`, `payment.failed`, `refund.processed`. Verify `X-Razorpay-Signature`. Must be idempotent.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {\n    \"payment\": {\n      \"entity\": {\n        \"id\": \"pay_Qa1B2c3D4e5F6g\",\n        \"order_id\": \"order_Pq1R2s3T4u5V6w\",\n        \"amount\": 349338,\n        \"status\": \"captured\"\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-Razorpay-Signature",
+                    "value": "<hmac>"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/webhooks/razorpay",
+                "description": "[NEW – proposed] Not called by the storefront. Handle `payment.captured`, `payment.failed`, `refund.processed`. Verify `X-Razorpay-Signature`. Must be idempotent.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {\n    \"payment\": {\n      \"entity\": {\n        \"id\": \"pay_Qa1B2c3D4e5F6g\",\n        \"order_id\": \"order_Pq1R2s3T4u5V6w\",\n        \"amount\": 349338,\n        \"status\": \"captured\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"received\": true\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6 · After order: track, cancel, return (NEW)",
+      "item": [
+        {
+          "name": "19. Get order (confirmation page)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders/{{orderNumber}}?token={{trackingToken}}",
+            "description": "[NEW – proposed] `trackingToken` is returned at creation so guests can reopen their confirmation. Signed-in customers can omit it."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders/{{orderNumber}}?token={{trackingToken}}",
+                "description": "[NEW – proposed] `trackingToken` is returned at creation so guests can reopen their confirmation. Signed-in customers can omit it."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order\": {\n      \"id\": \"ord_01HZX5Q8M2\",\n      \"orderNumber\": \"AA-100234\",\n      \"status\": \"confirmed\",\n      \"paymentStatus\": \"paid\",\n      \"paymentMethod\": \"online\",\n      \"currency\": \"INR\",\n      \"items\": [\n        {\n          \"productId\": \"prd_01HZX3K9\",\n          \"variantId\": \"var_01HZX3KA\",\n          \"sku\": \"AA-GWN-BLS-M\",\n          \"name\": \"Rose Silk Gown\",\n          \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n          \"size\": \"M\",\n          \"color\": \"Blush\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 249900,\n          \"mrpPaisa\": 299900,\n          \"lineTotalPaisa\": 249900\n        },\n        {\n          \"productId\": \"prd_01HZX4B2\",\n          \"variantId\": \"var_01HZX4B7\",\n          \"sku\": \"AA-KRT-ROS-L\",\n          \"name\": \"Blush Kurta Set\",\n          \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n          \"size\": \"L\",\n          \"color\": \"Rose\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 199900,\n          \"mrpPaisa\": 249900,\n          \"lineTotalPaisa\": 199900\n        }\n      ],\n      \"pricing\": {\n        \"subtotalPaisa\": 449800,\n        \"tierDiscountPaisa\": 44980,\n        \"couponDiscountPaisa\": 40482,\n        \"prepaidDiscountPaisa\": 15000,\n        \"shippingPaisa\": 0,\n        \"codFeePaisa\": 0,\n        \"gstIncludedPaisa\": 16635,\n        \"totalPaisa\": 349338\n      },\n      \"couponCode\": \"WELCOME10\",\n      \"shippingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"billingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"contact\": {\n        \"name\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\"\n      },\n      \"timeline\": [\n        {\n          \"status\": \"placed\",\n          \"label\": \"Order placed\",\n          \"at\": \"2026-10-20T09:12:44Z\"\n        },\n        {\n          \"status\": \"paid\",\n          \"label\": \"Payment received\",\n          \"at\": \"2026-10-20T09:14:02Z\"\n        },\n        {\n          \"status\": \"confirmed\",\n          \"label\": \"Order confirmed\",\n          \"at\": \"2026-10-20T09:14:03Z\"\n        }\n      ],\n      \"tracking\": null,\n      \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n      \"createdAt\": \"2026-10-20T09:12:44Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "20. Track order (order no. + phone)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders/track",
+            "description": "[NEW – proposed] Public tracking form. Rate-limit by IP + order number (e.g. 10/hour). Return `404 ORDER_NOT_FOUND` for any mismatch (do not reveal which field was wrong).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderNumber\": \"AA-100234\",\n  \"phone\": \"9876543210\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders/track",
+                "description": "[NEW – proposed] Public tracking form. Rate-limit by IP + order number (e.g. 10/hour). Return `404 ORDER_NOT_FOUND` for any mismatch (do not reveal which field was wrong).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"orderNumber\": \"AA-100234\",\n  \"phone\": \"9876543210\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order\": {\n      \"id\": \"ord_01HZX5Q8M2\",\n      \"orderNumber\": \"AA-100234\",\n      \"status\": \"shipped\",\n      \"paymentStatus\": \"paid\",\n      \"paymentMethod\": \"online\",\n      \"currency\": \"INR\",\n      \"items\": [\n        {\n          \"productId\": \"prd_01HZX3K9\",\n          \"variantId\": \"var_01HZX3KA\",\n          \"sku\": \"AA-GWN-BLS-M\",\n          \"name\": \"Rose Silk Gown\",\n          \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n          \"size\": \"M\",\n          \"color\": \"Blush\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 249900,\n          \"mrpPaisa\": 299900,\n          \"lineTotalPaisa\": 249900\n        },\n        {\n          \"productId\": \"prd_01HZX4B2\",\n          \"variantId\": \"var_01HZX4B7\",\n          \"sku\": \"AA-KRT-ROS-L\",\n          \"name\": \"Blush Kurta Set\",\n          \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n          \"size\": \"L\",\n          \"color\": \"Rose\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 199900,\n          \"mrpPaisa\": 249900,\n          \"lineTotalPaisa\": 199900\n        }\n      ],\n      \"pricing\": {\n        \"subtotalPaisa\": 449800,\n        \"tierDiscountPaisa\": 44980,\n        \"couponDiscountPaisa\": 40482,\n        \"prepaidDiscountPaisa\": 15000,\n        \"shippingPaisa\": 0,\n        \"codFeePaisa\": 0,\n        \"gstIncludedPaisa\": 16635,\n        \"totalPaisa\": 349338\n      },\n      \"couponCode\": \"WELCOME10\",\n      \"shippingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"billingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"contact\": {\n        \"name\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\"\n      },\n      \"timeline\": [\n        {\n          \"status\": \"placed\",\n          \"label\": \"Order placed\",\n          \"at\": \"2026-10-20T09:12:44Z\"\n        },\n        {\n          \"status\": \"paid\",\n          \"label\": \"Payment received\",\n          \"at\": \"2026-10-20T09:14:02Z\"\n        },\n        {\n          \"status\": \"confirmed\",\n          \"label\": \"Order confirmed\",\n          \"at\": \"2026-10-20T09:14:03Z\"\n        },\n        {\n          \"status\": \"processing\",\n          \"label\": \"Packed\",\n          \"at\": \"2026-10-20T15:30:00Z\"\n        },\n        {\n          \"status\": \"shipped\",\n          \"label\": \"Shipped\",\n          \"at\": \"2026-10-21T08:05:00Z\"\n        }\n      ],\n      \"tracking\": {\n        \"carrier\": \"Delhivery\",\n        \"awb\": \"DL123456789IN\",\n        \"url\": \"https://www.delhivery.com/track/package/DL123456789IN\"\n      },\n      \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n      \"createdAt\": \"2026-10-20T09:12:44Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "21. My orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/customer/orders?page=1&pageSize=20",
+            "description": "[NEW – proposed] Paged order history for the signed-in customer."
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/customer/orders?page=1&pageSize=20",
+                "description": "[NEW – proposed] Paged order history for the signed-in customer."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"ord_01HZX5Q8M2\",\n        \"orderNumber\": \"AA-100234\",\n        \"status\": \"shipped\",\n        \"paymentStatus\": \"paid\",\n        \"paymentMethod\": \"online\",\n        \"currency\": \"INR\",\n        \"items\": [\n          {\n            \"productId\": \"prd_01HZX3K9\",\n            \"variantId\": \"var_01HZX3KA\",\n            \"sku\": \"AA-GWN-BLS-M\",\n            \"name\": \"Rose Silk Gown\",\n            \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n            \"size\": \"M\",\n            \"color\": \"Blush\",\n            \"quantity\": 1,\n            \"unitPricePaisa\": 249900,\n            \"mrpPaisa\": 299900,\n            \"lineTotalPaisa\": 249900\n          },\n          {\n            \"productId\": \"prd_01HZX4B2\",\n            \"variantId\": \"var_01HZX4B7\",\n            \"sku\": \"AA-KRT-ROS-L\",\n            \"name\": \"Blush Kurta Set\",\n            \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n            \"size\": \"L\",\n            \"color\": \"Rose\",\n            \"quantity\": 1,\n            \"unitPricePaisa\": 199900,\n            \"mrpPaisa\": 249900,\n            \"lineTotalPaisa\": 199900\n          }\n        ],\n        \"pricing\": {\n          \"subtotalPaisa\": 449800,\n          \"tierDiscountPaisa\": 44980,\n          \"couponDiscountPaisa\": 40482,\n          \"prepaidDiscountPaisa\": 15000,\n          \"shippingPaisa\": 0,\n          \"codFeePaisa\": 0,\n          \"gstIncludedPaisa\": 16635,\n          \"totalPaisa\": 349338\n        },\n        \"couponCode\": \"WELCOME10\",\n        \"shippingAddress\": {\n          \"fullName\": \"Anjali Sharma\",\n          \"phone\": \"9876543210\",\n          \"email\": \"anjali@example.com\",\n          \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n          \"line2\": \"Greater Noida West\",\n          \"landmark\": \"Near Blue Sapphire Plaza\",\n          \"city\": \"Greater Noida\",\n          \"state\": \"Uttar Pradesh\",\n          \"pincode\": \"201318\"\n        },\n        \"billingAddress\": {\n          \"fullName\": \"Anjali Sharma\",\n          \"phone\": \"9876543210\",\n          \"email\": \"anjali@example.com\",\n          \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n          \"line2\": \"Greater Noida West\",\n          \"landmark\": \"Near Blue Sapphire Plaza\",\n          \"city\": \"Greater Noida\",\n          \"state\": \"Uttar Pradesh\",\n          \"pincode\": \"201318\"\n        },\n        \"contact\": {\n          \"name\": \"Anjali Sharma\",\n          \"phone\": \"9876543210\",\n          \"email\": \"anjali@example.com\"\n        },\n        \"timeline\": [\n          {\n            \"status\": \"placed\",\n            \"label\": \"Order placed\",\n            \"at\": \"2026-10-20T09:12:44Z\"\n          },\n          {\n            \"status\": \"paid\",\n            \"label\": \"Payment received\",\n            \"at\": \"2026-10-20T09:14:02Z\"\n          },\n          {\n            \"status\": \"confirmed\",\n            \"label\": \"Order confirmed\",\n            \"at\": \"2026-10-20T09:14:03Z\"\n          },\n          {\n            \"status\": \"processing\",\n            \"label\": \"Packed\",\n            \"at\": \"2026-10-20T15:30:00Z\"\n          },\n          {\n            \"status\": \"shipped\",\n            \"label\": \"Shipped\",\n            \"at\": \"2026-10-21T08:05:00Z\"\n          }\n        ],\n        \"tracking\": {\n          \"carrier\": \"Delhivery\",\n          \"awb\": \"DL123456789IN\",\n          \"url\": \"https://www.delhivery.com/track/package/DL123456789IN\"\n        },\n        \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n        \"createdAt\": \"2026-10-20T09:12:44Z\"\n      }\n    ],\n    \"total\": 1,\n    \"page\": 1,\n    \"pageSize\": 20,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "22. Cancel order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders/{{orderNumber}}/cancel",
+            "description": "[NEW – proposed] Allowed while status is `pending_payment`, `confirmed` or `processing`. Releases stock; starts a refund if already paid.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"trk_8f3b2c1d9a7e4f60b5\",\n  \"reason\": \"Ordered by mistake\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders/{{orderNumber}}/cancel",
+                "description": "[NEW – proposed] Allowed while status is `pending_payment`, `confirmed` or `processing`. Releases stock; starts a refund if already paid.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"token\": \"trk_8f3b2c1d9a7e4f60b5\",\n  \"reason\": \"Ordered by mistake\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order\": {\n      \"id\": \"ord_01HZX5Q8M2\",\n      \"orderNumber\": \"AA-100234\",\n      \"status\": \"cancelled\",\n      \"paymentStatus\": \"refund_pending\",\n      \"paymentMethod\": \"online\",\n      \"currency\": \"INR\",\n      \"items\": [\n        {\n          \"productId\": \"prd_01HZX3K9\",\n          \"variantId\": \"var_01HZX3KA\",\n          \"sku\": \"AA-GWN-BLS-M\",\n          \"name\": \"Rose Silk Gown\",\n          \"imageUrl\": \"/api/objects/products/rose-silk-gown-1.webp\",\n          \"size\": \"M\",\n          \"color\": \"Blush\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 249900,\n          \"mrpPaisa\": 299900,\n          \"lineTotalPaisa\": 249900\n        },\n        {\n          \"productId\": \"prd_01HZX4B2\",\n          \"variantId\": \"var_01HZX4B7\",\n          \"sku\": \"AA-KRT-ROS-L\",\n          \"name\": \"Blush Kurta Set\",\n          \"imageUrl\": \"/api/objects/products/blush-kurta-set-1.webp\",\n          \"size\": \"L\",\n          \"color\": \"Rose\",\n          \"quantity\": 1,\n          \"unitPricePaisa\": 199900,\n          \"mrpPaisa\": 249900,\n          \"lineTotalPaisa\": 199900\n        }\n      ],\n      \"pricing\": {\n        \"subtotalPaisa\": 449800,\n        \"tierDiscountPaisa\": 44980,\n        \"couponDiscountPaisa\": 40482,\n        \"prepaidDiscountPaisa\": 15000,\n        \"shippingPaisa\": 0,\n        \"codFeePaisa\": 0,\n        \"gstIncludedPaisa\": 16635,\n        \"totalPaisa\": 349338\n      },\n      \"couponCode\": \"WELCOME10\",\n      \"shippingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"billingAddress\": {\n        \"fullName\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\",\n        \"line1\": \"B-204, Galaxy Heights, Sector 4\",\n        \"line2\": \"Greater Noida West\",\n        \"landmark\": \"Near Blue Sapphire Plaza\",\n        \"city\": \"Greater Noida\",\n        \"state\": \"Uttar Pradesh\",\n        \"pincode\": \"201318\"\n      },\n      \"contact\": {\n        \"name\": \"Anjali Sharma\",\n        \"phone\": \"9876543210\",\n        \"email\": \"anjali@example.com\"\n      },\n      \"timeline\": [\n        {\n          \"status\": \"placed\",\n          \"label\": \"Order placed\",\n          \"at\": \"2026-10-20T09:12:44Z\"\n        },\n        {\n          \"status\": \"cancelled\",\n          \"label\": \"Order cancelled\",\n          \"at\": \"2026-10-20T10:00:00Z\"\n        }\n      ],\n      \"tracking\": null,\n      \"trackingToken\": \"trk_8f3b2c1d9a7e4f60b5\",\n      \"createdAt\": \"2026-10-20T09:12:44Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "23. Request return / exchange",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders/{{orderNumber}}/returns",
+            "description": "[NEW – proposed] After delivery, within `returnDays`. `reason` ∈ `size_too_small, size_too_large, defective, wrong_item, not_as_described, changed_mind`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"return\",\n  \"reason\": \"size_too_small\",\n  \"comment\": \"Fits tight at the bust\",\n  \"items\": [\n    {\n      \"orderItemId\": \"oi_01HZX5Q8N1\",\n      \"quantity\": 1\n    }\n  ],\n  \"refundTo\": \"original\",\n  \"phone\": \"9876543210\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/orders/{{orderNumber}}/returns",
+                "description": "[NEW – proposed] After delivery, within `returnDays`. `reason` ∈ `size_too_small, size_too_large, defective, wrong_item, not_as_described, changed_mind`.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"return\",\n  \"reason\": \"size_too_small\",\n  \"comment\": \"Fits tight at the bust\",\n  \"items\": [\n    {\n      \"orderItemId\": \"oi_01HZX5Q8N1\",\n      \"quantity\": 1\n    }\n  ],\n  \"refundTo\": \"original\",\n  \"phone\": \"9876543210\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"returnRequest\": {\n      \"id\": \"rtn_01J0A1B2C3\",\n      \"orderNumber\": \"AA-100234\",\n      \"type\": \"return\",\n      \"status\": \"requested\",\n      \"pickupScheduled\": null,\n      \"refundEstimatePaisa\": 249900,\n      \"createdAt\": \"2026-10-25T07:10:00Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "24. Newsletter subscribe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/public/newsletter/subscribe",
+            "description": "[NEW – proposed] Footer form.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"anjali@example.com\",\n  \"source\": \"web_footer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/v1/public/newsletter/subscribe",
+                "description": "[NEW – proposed] Footer form.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"anjali@example.com\",\n  \"source\": \"web_footer\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"subscribed\": true\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+@import "@fontsource-variable/cormorant-garamond";
+@import "@fontsource-variable/jost";
+@import "@fontsource-variable/noto-serif-devanagari";
+@import "@fontsource-variable/noto-sans-devanagari";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+html { scroll-behavior: smooth; scroll-padding-top: 7.5rem; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+body { background: #FEF9F0; color: #3B2219; font-feature-settings: "kern", "liga"; text-rendering: optimizeLegibility; overflow-x: clip; -webkit-tap-highlight-color: transparent; }
+a, button, summary, label, select { touch-action: manipulation; }
+/* Cormorant defaults to old-style figures (a "1" looks like "I"); prices and stats need lining figures */
+.font-display, .h-display, .wordmark { font-variant-numeric: lining-nums; font-feature-settings: "lnum", "kern"; }
+img, video { max-width: 100%; height: auto; }
+/* Hindi: Devanagari needs more line height and no artificial tracking */
+.lang-hi body { line-height: 1.75; }
+.lang-hi .h-display, .lang-hi .font-display { line-height: 1.3; letter-spacing: 0; }
+.lang-hi [class*="tracking-"]:not(.keep-tracking) { letter-spacing: normal; }
+.lang-hi .uppercase:not(.keep-tracking) { text-transform: none; }
+::selection { background: #F2BFA3; color: #331609; }
+:focus-visible { outline: 2px solid #8C4A2D; outline-offset: 3px; border-radius: 4px; }
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-8; }
+  .h-display { @apply font-display font-semibold tracking-tight text-cocoa; }
+  .wordmark { @apply font-display font-semibold uppercase tracking-[.26em] text-cocoa; }
+
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-wide transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-cocoa text-cream hover:bg-rose-dark; }
+  .btn-rose { @apply btn bg-rose text-white hover:bg-rose-dark; }
+  .btn-ghost { @apply btn border border-rose/60 text-cocoa hover:bg-blush/50; }
+  .field { @apply w-full rounded-xl text-base sm:text-sm border border-rose/30 bg-white/80 px-4 py-3 text-ink placeholder:text-ink/40 transition focus:border-rose focus:bg-white focus:outline-none focus:ring-2 focus:ring-blush-deep/60; }
+  .chip { @apply inline-flex min-w-[2.75rem] items-center justify-center rounded-full border border-rose/30 bg-white px-3.5 py-2 text-sm text-ink transition-colors hover:border-rose; }
+  .chip[aria-pressed="true"] { @apply border-cocoa bg-cocoa text-cream; }
+  .chip:disabled { @apply cursor-not-allowed text-ink/35 hover:border-rose/30; }
+  .chip-out:disabled { @apply line-through; }
+  .skeleton { @apply animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-blush/40 via-blush/10 to-blush/40; }
+
+  /* Double rose-gold ring: echoes the logo's concentric border */
+  .ring-frame { position: relative; border-radius: 9999px; }
+  .ring-frame::before, .ring-frame::after { content: ""; position: absolute; border-radius: inherit; border: 1.5px solid #AF6C47; pointer-events: none; }
+  .ring-frame::before { inset: -10px; opacity: .85; }
+  .ring-frame::after { inset: -18px; opacity: .45; }
+
+  .rule-orn { @apply flex items-center gap-3 text-rose; }
+  .rule-orn::before, .rule-orn::after { content: ""; @apply h-px flex-1 bg-gradient-to-r from-transparent via-rose/50 to-transparent; }
+
+  .prose-aarsi { @apply font-body text-[1.02rem] leading-8 text-ink/90; }
+  .prose-aarsi h2 { @apply mt-10 mb-3 font-display text-3xl font-semibold text-cocoa; }
+  .prose-aarsi h3 { @apply mt-8 mb-2 font-display text-2xl font-semibold text-cocoa; }
+  .prose-aarsi p { @apply my-4; }
+  .prose-aarsi a { @apply text-rose-dark underline underline-offset-4; }
+  .prose-aarsi ul { @apply my-4 list-disc pl-6; }
+  .prose-aarsi ol { @apply my-4 list-decimal pl-6; }
+  .prose-aarsi img { @apply my-6 h-auto max-w-full rounded-2xl; }
+  .prose-aarsi blockquote { @apply my-6 border-l-2 border-rose pl-5 font-display text-xl italic text-cocoa; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
